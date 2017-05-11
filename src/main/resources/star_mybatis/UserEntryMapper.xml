@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hujian.star.mapper.UserEntryMapper">
+
+    <resultMap id="USER_ENTRY_MAP" type="com.hujian.star.model.UserEntry">
+        <id column="USER_ID" jdbcType="INTEGER" property="user_id"/>
+        <result column="USER_NICK_NAME" jdbcType="VARCHAR" property="user_nick_name"/>
+        <result column="USER_TYPE" jdbcType="INTEGER" property="user_type"/>
+        <result column="USER_SEX" jdbcType="INTEGER" property="user_sex"/>
+        <result column="USER_PHONE" jdbcType="VARCHAR" property="user_phone"/>
+        <result column="USER_EMAIL" jdbcType="VARCHAR" property="user_email"/>
+        <result column="USER_LEVEL" jdbcType="INTEGER" property="user_level"/>
+        <result column="USER_STATUS" jdbcType="BOOLEAN" property="user_status"/>
+        <result column="USER_SCORE" jdbcType="REAL" property="user_score"/>
+        <result column="USER_CREDIT_SCORE" jdbcType="REAL" property="user_credit_score"/>
+    </resultMap>
+
+    <sql id="USER_ENTRY_COLUMNS">
+        USER_ID,USER_NICK_NAME,USER_TYPE,USER_SEX,USER_PHONE,USER_PHONE,
+        USER_EMAIL,USER_LEVEL,USER_STATUS,USER_SCORE,USER_CREDIT_SCORE
+    </sql>
+
+    <select id="getUserById" parameterType="java.lang.Integer" resultMap="USER_ENTRY_MAP">
+        SELECT
+        <include refid="USER_ENTRY_COLUMNS"/>
+        FROM USER WHERE USER_ID = #{user_id};
+    </select>
+
+    <select id="getUserByNickName" parameterType="java.lang.String" resultMap="USER_ENTRY_MAP">
+        SELECT
+        <include refid="USER_ENTRY_COLUMNS"/>
+        FROM USER WHERE USER_NICK_NAME = #{user_nick_name};
+    </select>
+
+    <insert id="insertUser" parameterType="java.util.Map">
+        INSERT INTO USER (`USER_NICK_NAME`,`USER_EMAIL`)
+        VALUES (#{user_nick_name},#{user_email});
+    </insert>
+
+    <update id="updateUser" parameterType="com.hujian.star.model.UserUpdateEntry">
+        UPDATE USER
+        SET USER_NICK_NAME = #{new_nick_name},USER_PHONE = #{new_phone},USER_EMAIL = #{new_email}
+        WHERE USER_NICK_NAME = #{user_nick_name};
+    </update>
+
+</mapper>

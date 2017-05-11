@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hujian.star.mapper.WorkEntryMapper">
+
+    <resultMap id="WORK_ENTRY_MAP" type="com.hujian.star.model.WorkEntry">
+        <id column="WORK_ID" jdbcType="INTEGER" property="work_id"/>
+        <result column="WORK_NAME" jdbcType="VARCHAR" property="work_name"/>
+        <result column="WORK_OF_USER_ID" jdbcType="INTEGER" property="work_of_user_id"/>
+        <result column="WORK_TYPE" jdbcType="INTEGER" property="work_type"/>
+        <result column="WORK_URL" jdbcType="VARCHAR" property="work_url"/>
+        <result column="WORK_SIZE" jdbcType="REAL" property="work_size"/>
+        <result column="WORK_DATE" jdbcType="DATE" property="work_date"/>
+        <result column="WORK_HOT_VALUE" jdbcType="REAL" property="work_hot_value"/>
+        <result column="WORK_LIKED_COUNT" jdbcType="INTEGER" property="work_like_count"/>
+        <result column="WORK_DISLIKE_COUNT" jdbcType="INTEGER" property="work_dislike_count"/>
+    </resultMap>
+
+    <sql id="WORK_ENTRY_COLUMN">
+        WORK_ID,WORK_NAME,WORK_OF_USER_ID,WORK_TYPE,WORK_URL,WORK_SIZE,WORK_SIZE,
+        WORK_DATE,WORK_HOT_VALUE,WORK_LIKED_COUNT,WORK_DISLIKE_COUNT
+    </sql>
+
+    <select id="getWorkByWorkId" parameterType="java.lang.Integer" resultMap="WORK_ENTRY_MAP">
+        SELECT
+        <include refid="WORK_ENTRY_COLUMN"/>
+        FROM `WORK`
+        WHERE `WORK_ID` = #{work_id};
+    </select>
+
+    <select id="getWorkByWorkIdEx" parameterType="java.math.BigInteger" resultMap="WORK_ENTRY_MAP">
+        SELECT
+        <include refid="WORK_ENTRY_COLUMN"/>
+        FROM `WORK`
+        WHERE `WORK_ID` = #{work_id};
+    </select>
+
+    <select id="getWorkByOfUserId" resultMap="WORK_ENTRY_MAP">
+        SELECT
+        <include refid="WORK_ENTRY_COLUMN"/>
+        FROM `WORK`
+        WHERE `WORK_OF_USER_ID` = #{0}
+        LIMIT #{1};
+    </select>
+
+    <insert id="insertWork" parameterType="com.hujian.star.model.InsertWorkEntry">
+        INSERT INTO `WORK` ( `WORK_NAME`,`WORK_TYPE`,`WORK_OF_USER_ID`,`WORK_DATE` )
+        VALUES (
+           #{work_name},#{work_type},#{work_of_user_id},CURDATE()
+        );
+    </insert>
+
+</mapper>

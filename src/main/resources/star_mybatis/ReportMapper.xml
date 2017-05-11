@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hujian.star.mapper.ReportMapper">
+
+    <insert id="reportUser">
+        INSERT INTO `REPORT_USER`(`FROM_USER_ID`,`TO_USER_ID`,`REPORT_CONTENT`)
+        VALUES (#{0},#{1},#{2});
+    </insert>
+
+    <insert id="reportComment">
+        INSERT INTO `REPORT_COMMENT`(`FROM_USER_ID`,`COMMENT_ID`,`REPORT_CONTENT`)
+        VALUES (#{0},#{1},#{2});
+    </insert>
+
+    <insert id="reportWork">
+        INSERT INTO `REPORT_WORK`(`FROM_USER_ID`,`WORK_ID`,`REPORT_CONTENT`)
+        VALUES (#{0},#{1},#{2});
+    </insert>
+
+</mapper>

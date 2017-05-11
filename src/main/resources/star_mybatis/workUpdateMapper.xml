@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hujian.star.mapper.WorkStatusUpdateMapper">
+
+    <update id="changeWorkUrl">
+        UPDATE  `WORK`
+        SET `WORK_URL` = #{url}
+        WHERE `WORK_ID` = #{0};
+    </update>
+
+    <update id="updateWorkHotValue">
+        UPDATE `WORK`
+        SET `WORK_HOT_VALUE` = `WORK_HOT_VALUE` + #{1}
+        WHERE `WORK_ID` = #{0};
+    </update>
+
+    <update id="updateWorkLikeCount">
+        UPDATE `WORK`
+        SET `WORK_LIKED_COUNT` = `WORK_LIKED_COUNT` + #{1}
+        WHERE `WORK_ID` = #{0};
+    </update>
+
+    <update id="updateWorkDislikeCount">
+        UPDATE `WORK`
+        SET `WORK_DISLIKE_COUNT` = `WORK_DISLIKE_COUNT` + #{1}
+        WHERE `WORK_ID` = #{0};
+    </update>
+
+    <select id="getWorkHotValue" resultType="java.lang.Double">
+        SELECT `WORK_HOT_VALUE`
+        FROM `WORK`
+        WHERE `WORK_ID` = #{0};
+    </select>
+
+    <update id="updateWorkType">
+        UPDATE `WORK`
+        SET  `WORK_TYPE` = #{1}
+        WHERE `WORK_ID` = #{0}
+    </update>
+
+</mapper>

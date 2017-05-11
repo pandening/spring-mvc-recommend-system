@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hujian.star.mapper.CommentEntryMapper">
+
+    <resultMap id="COMMENT_ENTRY_MAP" type="com.hujian.star.model.CommentEntry">
+        <id column="WORK_ID" jdbcType="BIGINT" property="work_id"/>
+        <result column="FROM_USER_ID" jdbcType="INTEGER" property="from_user_id"/>
+        <result column="TO_USER_ID" jdbcType="INTEGER" property="to_user_id"/>
+        <result column="COMMENT_CONTENT" jdbcType="VARCHAR" property="comment_content"/>
+        <result column="COMMENT_DATE" jdbcType="DATE" property="comment_date"/>
+        <result column="COMMENT_STATUS" jdbcType="BOOLEAN" property="comment_status"/>
+    </resultMap>
+
+    <sql id="COMMENT_COLUMN">
+        WORK_ID,FROM_USER_ID,TO_USER_ID,COMMENT_CONTENT,COMMENT_DATE,COMMENT_STATUS
+    </sql>
+
+    <select id="getCommentListByFromUser" resultMap="COMMENT_ENTRY_MAP">
+        SELECT
+        <include refid="COMMENT_COLUMN"/>
+        FROM `COMMENT`
+        WHERE `WORK_ID` = #{1} AND `FROM_USER_ID` = #{0};
+    </select>
+
+    <select id="getCommentListByWorkId" parameterType="java.math.BigInteger" resultMap="COMMENT_ENTRY_MAP">
+        SELECT
+        <include refid="COMMENT_COLUMN"/>
+        FROM `COMMENT`
+        WHERE `WORK_ID` = #{work_id};
+    </select>
+
+    <insert id="postComment" parameterType="com.hujian.star.model.CommentEntry">
+        INSERT INTO `COMMENT` VALUES
+        (#{from_user_id},#{to_user_id},#{work_id},#{comment_content},
+            curdate(),true);
+    </insert>
+
+
+</mapper>

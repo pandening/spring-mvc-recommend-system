@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hujian.mvc.mapper.UserMapper">
+
+    <resultMap id="UserInfoResultMap" type="com.hujian.mvc.model.UserInfo">
+        <id column="USER_ID" jdbcType="INTEGER" property="user_id"/>
+        <result column="USER_NICK_NAME" jdbcType="VARCHAR" property="user_nick_name"/>
+        <result column="USER_SEX" jdbcType="VARCHAR" property="user_sex"/>
+        <result column="USER_AGE" jdbcType="INTEGER" property="user_age"/>
+        <result column="USER_WORDS" jdbcType="VARCHAR" property="user_words"/>
+        <result column="USER_LEVEL" jdbcType="INTEGER" property="user_level"/>
+        <result column="USER_ONLINE_DATES" jdbcType="INTEGER" property="user_online_dates"/>
+        <result column="USER_STATUS" jdbcType="BOOLEAN" property="user_status"/>
+    </resultMap>
+
+    <sql id="USER_INFO_TABLES_COLUMN">
+        USER_ID, USER_NICK_NAME, USER_SEX, USER_AGE, USER_WORDS, USER_LEVEL, USER_ONLINE_DATES, USER_STATUS
+    </sql>
+
+    <select id="getUserById" parameterType="java.lang.Integer" resultMap="UserInfoResultMap">
+        select
+        <include refid="USER_INFO_TABLES_COLUMN"/>
+        FROM USER_INFO
+        WHERE USER_ID = #{user_id,jdbcType = INTEGER};
+    </select>
+
+    <select id="getUsersByNickName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT USER_ID
+        FROM USER_INFO
+        WHERE USER_NICK_NAME = #{nick_name,jdbcType = VARCHAR};
+    </select>
+
+    <select id="getUserListByIdLists" resultType="com.hujian.mvc.model.UserInfo"
+            parameterType="java.util.List">
+        SELECT
+        <include refid="USER_INFO_TABLES_COLUMN"/>
+        FROM USER_INFO
+        WHERE USER_ID IN
+        <foreach collection="list" item="user_id" index="index" open="(" close=")" separator=",">
+            #{user_id}
+        </foreach>
+
+    </select>
+
+    <select id="getUserByNickNameAndSex" parameterType="java.util.Map"
+            resultType="com.hujian.mvc.model.UserInfo">
+        SELECT
+        <include refid="USER_INFO_TABLES_COLUMN"/>
+        FROM USER_INFO
+        WHERE USER_NICK_NAME = #{nickname} AND USER_SEX = #{sex};
+    </select>
+
+    <select id="getFriendsOfMine" parameterType="java.lang.Integer" resultType="com.hujian.mvc.model.UserInfo">
+        SELECT
+        <include refid="USER_INFO_TABLES_COLUMN"/>
+        FROM USER_INFO
+        WHERE USER_ID IN
+        (SELECT FOLLOWER_ID FROM USER_RELATIONSHIP
+          WHERE OWNER_ID = #{user_id,jdbcType = INTEGER} AND FOLLOW_STATUS = TRUE );
+    </select>
+
+    <resultMap id="friends_list" type="com.hujian.mvc.model.UserFriendsEntry">
+        <id column="OWNER_ID" jdbcType="INTEGER" property="user_id"/>
+        <collection property="friends" ofType="com.hujian.mvc.model.UserInfo">
+            <id column="USER_ID" jdbcType="INTEGER" property="user_id"/>
+            <result column="USER_NICK_NAME" jdbcType="VARCHAR" property="user_nick_name"/>
+            <result column="USER_SEX" jdbcType="VARCHAR" property="user_sex"/>
+            <result column="USER_AGE" jdbcType="INTEGER" property="user_age"/>
+            <result column="USER_WORDS" jdbcType="VARCHAR" property="user_words"/>
+            <result column="USER_LEVEL" jdbcType="INTEGER" property="user_level"/>
+            <result column="USER_ONLINE_DATES" jdbcType="INTEGER" property="user_online_dates"/>
+            <result column="USER_STATUS" jdbcType="BOOLEAN" property="user_status"/>
+        </collection>
+    </resultMap>
+
+    <select id="getUserFriendsList" parameterType="java.lang.Integer" resultMap="friends_list">
+        SELECT
+        USER_RELATIONSHIP.OWNER_ID,
+        <include refid="USER_INFO_TABLES_COLUMN"/>
+        FROM USER_INFO,USER_RELATIONSHIP
+        WHERE
+        USER_ID = FOLLOWER_ID AND OWNER_ID = #{user_id};
+    </select>
+
+    <resultMap id="friends_friends_list" type="com.hujian.mvc.model.UserFriendsFriendsEntry">
+        <id column="MY_USER_ID" jdbcType="INTEGER" property="user_id"/>
+        <collection property="friendsFriends" ofType="com.hujian.mvc.model.UserFriendsEntry">
+            <id column="OWNER_ID" jdbcType="INTEGER" property="user_id"/>
+            <collection property="friends" ofType="com.hujian.mvc.model.UserInfo">
+                <id column="USER_ID" jdbcType="INTEGER" property="user_id"/>
+                <result column="USER_NICK_NAME" jdbcType="VARCHAR" property="user_nick_name"/>
+                <result column="USER_SEX" jdbcType="VARCHAR" property="user_sex"/>
+                <result column="USER_AGE" jdbcType="INTEGER" property="user_age"/>
+                <result column="USER_WORDS" jdbcType="VARCHAR" property="user_words"/>
+                <result column="USER_LEVEL" jdbcType="INTEGER" property="user_level"/>
+                <result column="USER_ONLINE_DATES" jdbcType="INTEGER" property="user_online_dates"/>
+                <result column="USER_STATUS" jdbcType="BOOLEAN" property="user_status"/>
+            </collection>
+        </collection>
+    </resultMap>
+    
+    <select id="getFriendsFriends" parameterType="java.lang.Integer" resultMap="friends_friends_list">
+        SELECT
+         #{user_id} as MY_USER_ID,OWNER_ID,
+         <include refid="USER_INFO_TABLES_COLUMN"/>
+        FROM USER_INFO,USER_RELATIONSHIP
+        WHERE USER_ID = FOLLOWER_ID AND OWNER_ID IN
+        (SELECT FOLLOWER_ID FROM USER_RELATIONSHIP
+          WHERE OWNER_ID = #{user_id});
+    </select>
+
+    <insert id="insertUser" parameterType="com.hujian.mvc.model.InsertUserEntry">
+        INSERT INTO
+        USER_INFO(USER_NICK_NAME,USER_AGE,USER_SEX,USER_WORDS,USER_LEVEL)
+        VALUES (#{nick_name},#{age},#{sex},#{words},0);
+    </insert>
+
+    <delete id="removeUserByUserId" parameterType="java.lang.Integer">
+        DELETE FROM USER_INFO
+        WHERE USER_ID = #{user_id}
+    </delete>
+
+    <update id="updateUserInfo" parameterType="com.hujian.mvc.model.UpdateEntry">
+        UPDATE USER_INFO
+        SET USER_NICK_NAME = #{nick_name},USER_SEX = #{sex},
+          USER_AGE = #{age},USER_WORDS = #{words}
+        WHERE USER_ID = #{user_id};
+    </update>
+
+</mapper>

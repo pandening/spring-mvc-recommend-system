@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+       http://www.springframework.org/schema/aop
+	   http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <!-- 注解扫描包 -->
+    <context:component-scan base-package="com.hujian.*"/>
+
+    <bean id="actionServices" class="com.hujian.star.services.impl.ActionServicesImpl"/>
+    <bean id="jsonMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+    <bean id="itemUserScoreChangeServicesUtil" class="com.hujian.star.services.utils.ItemUserScoreChangeServicesUtil"/>
+
+    <!-- set some config in this beans -->
+    <bean id="configTemplate" class="com.hujian.star.config.ConfigTemplate">
+        <property name="like_factor" value="1.0"/>
+        <property name="dislike_factor" value="-1.0"/>
+        <property name="hit_factor" value="0.2"/>
+        <property name="comment_factor" value="0.3"/>
+        <property name="forward_factor" value="0.6"/>
+        <property name="logBaseFile" value="I:\\serverLog\\"/>
+        <property name="each_push_recommend_items" value="10"/>
+        <property name="log_chunk_set" value="10"/>
+        <property name="originRecommendDataBaseFile" value="I:\\ServerLog\\data\\recommend\\data.txt"/>
+        <property name="work_hot_value_threshold" value="10.0"/>
+        <property name="redis_work_entry_key" value="work_hot_entry"/>
+        <property name="redis_negative_credit_user_entry_key" value="negative_credit_user_entry"/>
+        <property name="user_credit_score_report_factor" value="1.0"/>
+        <property name="work_ban_type_set" value="0"/>
+        <property name="level_growth_score_like_ac" value="2.5"/>
+        <property name="level_growth_score_hit_ac" value="1.0"/>
+        <property name="level_growth_score_forward" value="3.0"/>
+    </bean>
+
+    <!-- log handler -->
+    <bean id="sampleLocalLogHandler" class="com.hujian.star.log.impl.SampleLocalLogServiceImpl"/>
+
+    <!-- this is the recommend services -->
+    <bean id="recommendServices" class="com.hujian.recommend.services.impl.RecommendServicesImpl"/>
+
+    <bean id="sourceServices" class="com.hujian.recommend.data.impl.GeneratorRecommendOriginSourceServicesImpl"/>
+
+    <bean id="redisCacheServices" class="com.hujian.star.services.impl.RedisCacheServicesImpl"/>
+
+    <bean id="serviceAop" class="com.hujian.aop.ServiceAop"/>
+
+    <!-- 启用spring mvc 注解 -->
+    <context:annotation-config/>
+    <mvc:annotation-driven/>
+    <task:annotation-driven/>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!--加载本地的其他配置 -->
+    <import resource="spring-base.xml"/>
+    <import resource="spring-database-star.xml"/>
+    <import resource="redis-context.xml"/>
+
+</beans>
